@@ -2,8 +2,8 @@ import { Button } from './components/ui/button'
 const App = () => {
   return (
     <div>
-      <h1 className="text-red-500">FinTrack</h1>
-      <Button>Click me</Button>
+      <h1>FinTrack</h1>
+      <Button className="bg-primary-blue">Click me</Button>
     </div>
   )
 }
