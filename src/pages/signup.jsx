@@ -1,6 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router'
+import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
@@ -23,6 +26,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import PasswordInput from '@/components/ui/password-input'
+import api from '@/lib/axios'
 
 const signupSchema = z
   .object({
@@ -58,8 +62,26 @@ const signupSchema = z
   })
 
 const SignupPage = () => {
+  const [user, setUser] = useState(null)
+
+  const signupMutation = useMutation({
+    mutationKey: ['signup'],
+
+    mutationFn: async (variables) => {
+      const response = await api.post('/users', {
+        first_name: variables.firstName,
+        last_name: variables.lastName,
+        email: variables.email,
+        password: variables.password,
+      })
+
+      return response.data
+    },
+  })
+
   const form = useForm({
     resolver: zodResolver(signupSchema),
+
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -71,16 +93,31 @@ const SignupPage = () => {
   })
 
   const handleSignup = (data) => {
-    console.log(data)
+    signupMutation.mutate(data, {
+      onSuccess: (createdUser) => {
+        const accessToken = createdUser.access_token
+        const refreshToken = createdUser.refresh_token
 
-    const signupData = {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      password: data.password,
-    }
+        setUser(createdUser)
 
-    console.log(signupData)
+        localStorage.setItem('accessToken', accessToken)
+        localStorage.setItem('refreshToken', refreshToken)
+
+        toast.success('Conta criada com sucesso!')
+      },
+
+      onError: () => {
+        toast.error('Erro ao criar a conta. Tente novamente.')
+      },
+    })
+  }
+
+  if (user) {
+    return (
+      <div>
+        <h1>Bem-vindo(a), {user.first_name}!</h1>
+      </div>
+    )
   }
 
   return (
