@@ -1,5 +1,14 @@
+import { Navigate } from 'react-router'
+
+import { useAuthContext } from '@/contexts/auth'
+
 const HomePage = () => {
-  return <h1>Welcome to the Home Page</h1>
+  const { user, isInitializing } = useAuthContext()
+  if (isInitializing) return null
+  if (!user) {
+    return <Navigate to="/login" />
+  }
+  return <h1>Home page</h1>
 }
 
 export default HomePage
