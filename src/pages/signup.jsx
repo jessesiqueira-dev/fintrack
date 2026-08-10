@@ -1,9 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router'
-import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
@@ -26,229 +23,141 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import PasswordInput from '@/components/ui/password-input'
-import api from '@/lib/axios'
+import { useAuthContext } from '@/contexts/auth'
 
 const signupSchema = z
   .object({
-    firstName: z.string().trim().min(1, { message: 'O nome é obrigatório.' }),
-
-    lastName: z
-      .string()
-      .trim()
-      .min(1, { message: 'O sobrenome é obrigatório.' }),
-
+    firstName: z.string().trim().min(1, {
+      message: 'O nome é obrigatório.',
+    }),
+    lastName: z.string().trim().min(1, {
+      message: 'O sobrenome é obrigatório.',
+    }),
     email: z
       .string()
+      .email({
+        message: 'O e-mail é inválido.',
+      })
       .trim()
-      .min(1, { message: 'O e-mail é obrigatório.' })
-      .email({ message: 'Informe um e-mail válido.' }),
-
-    password: z.string().min(6, {
+      .min(1, {
+        message: 'O e-mail é obrigatório.',
+      }),
+    password: z.string().trim().min(6, {
       message: 'A senha deve ter no mínimo 6 caracteres.',
     }),
-
-    confirmPassword: z.string().min(6, {
-      message: 'A confirmação deve ter no mínimo 6 caracteres.',
+    passwordConfirmation: z.string().trim().min(6, {
+      message: 'A confirmação de senha é obrigatória.',
     }),
-
+    // terms precisa ser 'true'
     terms: z.boolean().refine((value) => value === true, {
-      message:
-        'Você deve aceitar os termos de uso e a política de privacidade.',
+      message: 'Você precisa aceitar os termos.',
     }),
   })
-  .refine((data) => data.password === data.confirmPassword, {
+  .refine((data) => data.password === data.passwordConfirmation, {
     message: 'As senhas não coincidem.',
-    path: ['confirmPassword'],
+    path: ['passwordConfirmation'],
   })
 
 const SignupPage = () => {
-  const [user, setUser] = useState(null)
-
-  const signupMutation = useMutation({
-    mutationKey: ['signup'],
-
-    mutationFn: async (variables) => {
-      const response = await api.post('/users', {
-        first_name: variables.firstName,
-        last_name: variables.lastName,
-        email: variables.email,
-        password: variables.password,
-      })
-
-      return response.data
-    },
-  })
+  const { user, signup } = useAuthContext()
 
   const form = useForm({
     resolver: zodResolver(signupSchema),
-
     defaultValues: {
       firstName: '',
       lastName: '',
       email: '',
       password: '',
-      confirmPassword: '',
+      passwordConfirmation: '',
       terms: false,
     },
   })
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const accessToken = localStorage.getItem('accessToken')
 
-        if (!accessToken) return
-        const response = await api.get('/users/me', {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
-        setUser(response.data)
-      } catch (error) {
-        localStorage.removeItem('accessToken')
-        localStorage.removeItem('refreshToken')
-        console.error(error)
-      }
-    }
-
-    init()
-  }, [])
-
-  const handleSignup = (data) => {
-    signupMutation.mutate(data, {
-      onSuccess: (createdUser) => {
-        const accessToken = createdUser.tokens.accessToken
-        const refreshToken = createdUser.tokens.refreshToken
-
-        setUser(createdUser)
-
-        localStorage.setItem('accessToken', accessToken)
-        localStorage.setItem('refreshToken', refreshToken)
-
-        toast.success('Conta criada com sucesso!')
-      },
-      onError: (error) => {
-        console.log('STATUS:', error.response?.status)
-        console.log('ERRO DA API:', error.response?.data)
-      },
-    })
-  }
+  const handleSubmit = (data) => signup(data)
 
   if (user) {
-    return (
-      <div>
-        <h1>Bem-vindo(a), {user.first_name}!</h1>
-      </div>
-    )
+    return <h1>Olá, {user.first_name}!</h1>
   }
-
   return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-center gap-3 px-4 py-8">
-      <Card className="w-full max-w-[500px]">
-        <CardHeader>
-          <CardTitle>Crie a sua conta</CardTitle>
-
-          <CardDescription>Insira os seus dados abaixo.</CardDescription>
-        </CardHeader>
-
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSignup)}>
+    <div className="flex h-screen w-screen flex-col items-center justify-center gap-3">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
+          <Card className="w-[500px]">
+            <CardHeader>
+              <CardTitle>Crie a sua conta</CardTitle>
+              <CardDescription>Insira os seus dados abaixo.</CardDescription>
+            </CardHeader>
             <CardContent className="space-y-4">
+              {/* PRIMEIRO NOME */}
               <FormField
                 control={form.control}
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Nome</FormLabel>
-
                     <FormControl>
-                      <Input
-                        placeholder="Digite seu nome"
-                        autoComplete="given-name"
-                        {...field}
-                      />
+                      <Input placeholder="Digite seu nome" {...field} />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
+              {/* ÚLTIMO NOME */}
               <FormField
                 control={form.control}
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Sobrenome</FormLabel>
-
                     <FormControl>
-                      <Input
-                        placeholder="Digite seu sobrenome"
-                        autoComplete="family-name"
-                        {...field}
-                      />
+                      <Input placeholder="Digite seu sobrenome" {...field} />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
+              {/* E-MAIL */}
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>E-mail</FormLabel>
-
                     <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="Digite seu e-mail"
-                        autoComplete="email"
-                        {...field}
-                      />
+                      <Input placeholder="Digite seu e-mail" {...field} />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
+              {/* SENHA */}
               <FormField
                 control={form.control}
                 name="password"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Senha</FormLabel>
-
                     <FormControl>
-                      <PasswordInput
-                        placeholder="Digite sua senha"
-                        autoComplete="new-password"
-                        {...field}
-                      />
+                      <PasswordInput {...field} />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
+              {/* CONFIRMAÇÃO DE SENHA */}
               <FormField
                 control={form.control}
-                name="confirmPassword"
+                name="passwordConfirmation"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirme sua senha</FormLabel>
-
+                    <FormLabel>Confirmação de senha</FormLabel>
                     <FormControl>
                       <PasswordInput
                         placeholder="Digite sua senha novamente"
-                        autoComplete="new-password"
                         {...field}
                       />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
@@ -258,55 +167,39 @@ const SignupPage = () => {
                 control={form.control}
                 name="terms"
                 render={({ field }) => (
-                  <FormItem>
-                    <div className="flex items-start space-x-2">
-                      <FormControl>
-                        <Checkbox
-                          id="terms"
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-
-                      <FormLabel
+                  <FormItem className="items-top flex space-x-2 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="leading-none">
+                      <label
                         htmlFor="terms"
-                        className="cursor-pointer text-xs font-normal leading-relaxed text-muted-foreground"
+                        className={`text-xs text-muted-foreground opacity-75 ${form.formState.errors.terms && 'text-red-500'}`}
                       >
                         Ao clicar em “Criar conta”, você aceita{' '}
                         <a
                           href="#"
-                          className="text-foreground underline underline-offset-4"
-                          onClick={(event) => event.stopPropagation()}
+                          className={`text-white underline ${form.formState.errors.terms && 'text-red-500'}`}
                         >
-                          nossos termos de uso e política de privacidade.
+                          nosso termo de uso e política de privacidade.
                         </a>
-                      </FormLabel>
+                      </label>
                     </div>
-
-                    <FormMessage />
                   </FormItem>
                 )}
               />
             </CardContent>
-
             <CardFooter>
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={form.formState.isSubmitting}
-              >
-                {form.formState.isSubmitting
-                  ? 'Criando conta...'
-                  : 'Criar conta'}
-              </Button>
+              <Button className="w-full">Criar conta</Button>
             </CardFooter>
-          </form>
-        </Form>
-      </Card>
-
+          </Card>
+        </form>
+      </Form>
       <div className="flex items-center justify-center">
-        <p className="text-center text-sm opacity-50">Já possui uma conta?</p>
-
+        <p className="text-center opacity-50">Já possui uma conta?</p>
         <Button variant="link" asChild>
           <Link to="/login">Faça login</Link>
         </Button>
