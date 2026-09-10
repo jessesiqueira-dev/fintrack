@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router'
 
-import Header from '@/components/ui/header'
+import Header from '@/components/header'
 import { useAuthContext } from '@/contexts/auth'
 
 const HomePage = () => {
@@ -12,6 +12,10 @@ const HomePage = () => {
   return (
     <>
       <Header />
+      <div className="flex items-center justify-between">
+        <h2>Dashboard</h2>
+        <div>|{/*SELETOR DATA E BOTAO DE NOVA TRANSAÇÃO*/}</div>
+      </div>
     </>
   )
 }
