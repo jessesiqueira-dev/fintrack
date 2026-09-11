@@ -1,5 +1,14 @@
+import { addMonths } from 'date-fns'
+import { useState } from 'react'
+
+import { DatePickerWithRange } from './ui/date-picker-with-range'
+
 const DateSelection = () => {
-  return <div className="flex items-center gap-2"></div>
+  const [date, setDate] = useState({
+    from: new Date(),
+    to: addMonths(new Date(), 1),
+  })
+  return <DatePickerWithRange value={date} onChange={setDate} />
 }
 
 export default DateSelection
