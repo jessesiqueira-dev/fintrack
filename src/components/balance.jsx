@@ -22,6 +22,8 @@ const Balance = () => {
     queryFn: () => {
       return UserService.getBalance({ from, to })
     },
+    staleTime: 1000 * 60 * 5, // 5 minutos
+    enabled: Boolean(from) && Boolean(to) && Boolean(user.id), // só vai rodar a query se eu tiver o "from" e o "to"
   })
   console.log({ data })
   return (
