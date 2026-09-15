@@ -81,24 +81,25 @@ const AddTransactionButton = () => {
               <FormField
                 control={form.control}
                 name="amount"
-                render={({ field }) => (
+                render={({ field: { ref, onChange, ...field } }) => (
                   <FormItem>
-                    <FormLabel>Valor</FormLabel>
-                    <FormControl>
-                      <NumericFormat
-                        placeholder="Digite o valor da transação"
-                        thousandSeparator="."
-                        decimalSeparator=","
-                        prefix="R$ "
-                        allowNegative={false}
-                        customInput={Input}
-                        {...field}
-                        onChange={() => {}}
-                        onValueChange={(values) =>
-                          field.onChange(values.floatValue)
-                        }
-                      />
-                    </FormControl>
+                    <FormLabel htmlFor="amount">Valor</FormLabel>
+
+                    <NumericFormat
+                      {...field}
+                      id="amount"
+                      getInputRef={ref}
+                      placeholder="Digite o valor da transação"
+                      thousandSeparator="."
+                      decimalSeparator=","
+                      prefix="R$ "
+                      allowNegative={false}
+                      customInput={Input}
+                      onValueChange={(values) => {
+                        onChange(values.floatValue)
+                      }}
+                    />
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -124,7 +125,7 @@ const AddTransactionButton = () => {
                 name="type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Tipo</FormLabel>
+                    <p className="text-sm font-medium">Tipo</p>
                     <FormControl>
                       <div className="grid grid-cols-3 gap-4">
                         <Button

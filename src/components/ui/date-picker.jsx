@@ -15,11 +15,12 @@ import {
 import { cn } from '@/lib/utils'
 
 const DatePicker = forwardRef(
-  ({ value, onChange, placeholder = 'Selecione uma data' }, ref) => {
+  ({ value, onChange, placeholder = 'Selecione uma data', ...props }, ref) => {
     return (
       <Popover>
         <PopoverTrigger asChild>
           <Button
+            {...props}
             ref={ref}
             variant="outline"
             className={cn(
