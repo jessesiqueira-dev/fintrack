@@ -75,24 +75,23 @@ const EditTransactionButton = ({ transaction }) => {
             <FormField
               control={form.control}
               name="amount"
-              render={({ field }) => (
+              render={({ field: { ref, onChange, ...field } }) => (
                 <FormItem>
-                  <FormLabel>Valor</FormLabel>
-                  <FormControl>
-                    <NumericFormat
-                      placeholder="Digite o valor da transação"
-                      thousandSeparator="."
-                      decimalSeparator=","
-                      prefix="R$ "
-                      allowNegative={false}
-                      customInput={Input}
-                      {...field}
-                      onChange={() => {}}
-                      onValueChange={(values) =>
-                        field.onChange(values.floatValue)
-                      }
-                    />
-                  </FormControl>
+                  <FormLabel htmlFor="edit-transaction-amount">Valor</FormLabel>
+                  <NumericFormat
+                    {...field}
+                    id="edit-transaction-amount"
+                    getInputRef={ref}
+                    placeholder="Digite o valor da transação"
+                    thousandSeparator="."
+                    decimalSeparator=","
+                    prefix="R$ "
+                    allowNegative={false}
+                    customInput={Input}
+                    onValueChange={(values) => {
+                      onChange(values.floatValue)
+                    }}
+                  />
                   <FormMessage />
                 </FormItem>
               )}

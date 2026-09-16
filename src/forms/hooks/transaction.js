@@ -37,6 +37,7 @@ export const useCreateTransactionForm = ({ onSuccess, onError }) => {
 }
 
 const getEditTransactionFormDefaultValues = (transaction) => ({
+  id: transaction.id,
   name: transaction.name,
   amount: parseFloat(transaction.amount),
   date: new Date(transaction.date),
@@ -52,11 +53,10 @@ export const useEditTransactionForm = ({ transaction, onSuccess, onError }) => {
   })
   useEffect(() => {
     form.reset(getEditTransactionFormDefaultValues(transaction))
-    form.setValue('id', transaction.id)
   }, [form, transaction])
   const onSubmit = async (data) => {
-    await updateTransaction(data)
     try {
+      await updateTransaction(data)
       onSuccess()
     } catch (error) {
       console.error(error)
