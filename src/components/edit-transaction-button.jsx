@@ -2,6 +2,7 @@ import {
   ExternalLinkIcon,
   Loader2Icon,
   PiggyBankIcon,
+  Trash2Icon,
   TrendingDownIcon,
   TrendingUpIcon,
 } from 'lucide-react'
@@ -9,6 +10,7 @@ import { useState } from 'react'
 import { NumericFormat } from 'react-number-format'
 import { toast } from 'sonner'
 
+import { useDeleteTransaction } from '@/api/hooks/transaction'
 import { useEditTransactionForm } from '@/forms/hooks/transaction'
 
 import { Button } from './ui/button'
@@ -33,6 +35,8 @@ import {
 
 const EditTransactionButton = ({ transaction }) => {
   const [sheetIsOpen, setSheetIsOpen] = useState(false)
+  const { mutateAsync: deleteTransaction, isPending: isDeleting } =
+    useDeleteTransaction(transaction.id)
   const { form, onSubmit } = useEditTransactionForm({
     transaction,
     onSuccess: () => {
@@ -45,6 +49,26 @@ const EditTransactionButton = ({ transaction }) => {
       )
     },
   })
+
+  const handleDelete = async () => {
+    const shouldDelete = window.confirm(
+      'Tem certeza de que deseja excluir esta transação?'
+    )
+
+    if (!shouldDelete) return
+
+    try {
+      await deleteTransaction()
+      setSheetIsOpen(false)
+      toast.success('Transação excluída com sucesso!')
+    } catch (error) {
+      console.error(error)
+      toast.error(
+        'Ocorreu um erro ao excluir a transação. Por favor, tente novamente.'
+      )
+    }
+  }
+
   return (
     <Sheet open={sheetIsOpen} onOpenChange={setSheetIsOpen}>
       <SheetTrigger asChild>
@@ -157,12 +181,26 @@ const EditTransactionButton = ({ transaction }) => {
               )}
             />
             <SheetFooter className="sm:space-x-4">
+              <Button
+                type="button"
+                variant="destructive"
+                className="w-full"
+                disabled={form.formState.isSubmitting || isDeleting}
+                onClick={handleDelete}
+              >
+                {isDeleting ? (
+                  <Loader2Icon className="animate-spin" />
+                ) : (
+                  <Trash2Icon />
+                )}
+                Excluir
+              </Button>
               <SheetClose asChild>
                 <Button
                   type="reset"
                   variant="secondary"
                   className="w-full"
-                  disabled={form.formState.isSubmitting}
+                  disabled={form.formState.isSubmitting || isDeleting}
                 >
                   Cancelar
                 </Button>
@@ -170,7 +208,7 @@ const EditTransactionButton = ({ transaction }) => {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={form.formState.isSubmitting}
+                disabled={form.formState.isSubmitting || isDeleting}
               >
                 {form.formState.isSubmitting && (
                   <Loader2Icon className="animate-spin" />
