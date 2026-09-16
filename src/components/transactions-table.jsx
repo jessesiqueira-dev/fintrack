@@ -16,7 +16,6 @@ import EditTransactionButton from './edit-transaction-button'
 import TransactionTypeBadge from './transaction-type-badge'
 import { Button } from './ui/button'
 import { DataTable } from './ui/data-table'
-import { ScrollArea } from './ui/scroll-area'
 
 const SortableHeader = ({ column, children }) => {
   const sortDirection = column.getIsSorted()
@@ -139,13 +138,11 @@ const TransactionsTable = () => {
       )}
 
       {!isPending && !isError && (
-        <ScrollArea className="h-[450px] max-h-[450px] rounded-md border">
-          <DataTable
-            columns={columns}
-            data={transactions ?? []}
-            emptyMessage="Nenhuma transação encontrada neste período."
-          />
-        </ScrollArea>
+        <DataTable
+          columns={columns}
+          data={transactions ?? []}
+          emptyMessage="Nenhuma transação encontrada neste período."
+        />
       )}
     </section>
   )
