@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -29,6 +30,7 @@ const removeTokens = () => {
 }
 
 export const AuthContextProvider = ({ children }) => {
+  const queryClient = useQueryClient()
   const [user, setUser] = useState()
   const [isInitializing, setIsInitializing] = useState(true)
   const signupMutation = useSignup()
@@ -81,9 +83,11 @@ export const AuthContextProvider = ({ children }) => {
       console.error(error)
     }
   }
-  const signOut = () => {
-    setUser(null)
+  const signOut = async () => {
     removeTokens()
+    setUser(null)
+    await queryClient.cancelQueries()
+    queryClient.clear()
   }
   return (
     <AuthContext.Provider
