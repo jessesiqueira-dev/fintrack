@@ -63,6 +63,9 @@ protectedApi.interceptors.response.use(
         localStorage.removeItem(LOCAL_STORAGE_REFRESH_TOKEN_KEY)
 
         console.error(refreshError)
+        window.location.replace('/login')
+
+        return Promise.reject(refreshError)
       }
     }
 
