@@ -13,7 +13,11 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
-export function DataTable({ columns, data }) {
+export function DataTable({
+  columns,
+  data,
+  emptyMessage = 'Nenhum resultado encontrado.',
+}) {
   const table = useReactTable({
     data,
     columns,
@@ -57,7 +61,7 @@ export function DataTable({ columns, data }) {
         ) : (
           <TableRow>
             <TableCell colSpan={columns.length} className="h-24 text-center">
-              No results.
+              {emptyMessage}
             </TableCell>
           </TableRow>
         )}
