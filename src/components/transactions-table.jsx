@@ -1,6 +1,12 @@
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale/pt-BR'
-import { Loader2Icon, RefreshCwIcon } from 'lucide-react'
+import {
+  ArrowDownIcon,
+  ArrowUpDownIcon,
+  ArrowUpIcon,
+  Loader2Icon,
+  RefreshCwIcon,
+} from 'lucide-react'
 import { useSearchParams } from 'react-router'
 
 import { useGetTransactions } from '@/api/hooks/transaction'
@@ -12,21 +18,53 @@ import { Button } from './ui/button'
 import { DataTable } from './ui/data-table'
 import { ScrollArea } from './ui/scroll-area'
 
+const SortableHeader = ({ column, children }) => {
+  const sortDirection = column.getIsSorted()
+  const SortIcon =
+    sortDirection === 'asc'
+      ? ArrowUpIcon
+      : sortDirection === 'desc'
+        ? ArrowDownIcon
+        : ArrowUpDownIcon
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      className="-ml-4"
+      aria-label={`Ordenar por ${children}`}
+      onClick={column.getToggleSortingHandler()}
+    >
+      {children}
+      <SortIcon size={16} />
+    </Button>
+  )
+}
+
 const columns = [
   {
     accessorKey: 'name',
-    header: 'Título',
+    header: ({ column }) => (
+      <SortableHeader column={column}>Título</SortableHeader>
+    ),
   },
   {
     accessorKey: 'type',
-    header: 'Tipo',
+    header: ({ column }) => (
+      <SortableHeader column={column}>Tipo</SortableHeader>
+    ),
     cell: ({ row: { original: transaction } }) => {
       return <TransactionTypeBadge variant={transaction.type.toLowerCase()} />
     },
   },
   {
     accessorKey: 'date',
-    header: 'Data',
+    header: ({ column }) => (
+      <SortableHeader column={column}>Data</SortableHeader>
+    ),
+    sortingFn: (rowA, rowB) =>
+      new Date(rowA.original.date).getTime() -
+      new Date(rowB.original.date).getTime(),
     cell: ({ row: { original: transaction } }) => {
       return format(new Date(transaction.date), "dd 'de' MMMM 'de' yyyy", {
         locale: ptBR,
@@ -35,7 +73,11 @@ const columns = [
   },
   {
     accessorKey: 'amount',
-    header: 'Valor',
+    header: ({ column }) => (
+      <SortableHeader column={column}>Valor</SortableHeader>
+    ),
+    sortingFn: (rowA, rowB) =>
+      Number(rowA.original.amount) - Number(rowB.original.amount),
     cell: ({ row: { original: transaction } }) => {
       return formatCurrency(transaction.amount)
     },
@@ -43,6 +85,7 @@ const columns = [
   {
     accessorKey: 'actions',
     header: 'Ações',
+    enableSorting: false,
     cell: ({ row: { original: transaction } }) => {
       return <EditTransactionButton transaction={transaction} />
     },
