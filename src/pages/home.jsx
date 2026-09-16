@@ -17,11 +17,11 @@ const HomePage = () => {
   return (
     <>
       <Header />
-      <div className="space-y-6 p-8">
+      <div className="space-y-6 p-4 sm:p-6 lg:p-8">
         {/* PARTE DO TOPO */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-2xl font-bold">Dashboard</h2>
-          <div className="flex items-center gap-2">
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
             <DateSelection />
             <AddTransactionButton />
             {/* SELETOR DATA E BOTAO DE NOVA TRANSACAO */}
@@ -29,7 +29,7 @@ const HomePage = () => {
         </div>
 
         {/* GRAFICOS ETC */}
-        <div className="grid grid-cols-[2fr,1fr] gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[2fr,1fr]">
           <Balance />
           <FinancialSummaryChart />
         </div>

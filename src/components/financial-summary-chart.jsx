@@ -63,8 +63,8 @@ const FinancialSummaryChart = () => {
         )}
 
         {!isPending && !isError && total > 0 && (
-          <div className="flex w-full items-center gap-4">
-            <div className="h-[190px] min-w-0 flex-1">
+          <div className="flex w-full flex-col items-center gap-4 sm:flex-row">
+            <div className="h-[190px] w-full min-w-0 sm:flex-1">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart accessibilityLayer>
                   <Pie
@@ -84,7 +84,7 @@ const FinancialSummaryChart = () => {
               </ResponsiveContainer>
             </div>
 
-            <div className="space-y-3">
+            <div className="grid w-full grid-cols-3 gap-3 sm:w-auto sm:grid-cols-1">
               {chartData.map((item) => {
                 const Icon = item.icon
                 const percentage = Math.round((item.value / total) * 100)

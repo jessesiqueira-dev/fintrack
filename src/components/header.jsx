@@ -19,15 +19,15 @@ const Header = () => {
   const { user, signOut } = useAuthContext()
   return (
     <Card>
-      <CardContent className="flex items-center justify-between px-8 py-4">
-        <div>
-          <img src={logo} alt="FinTrack" />
+      <CardContent className="flex items-center justify-between px-4 py-4 sm:px-8">
+        <div className="min-w-0">
+          <img src={logo} alt="FinTrack" className="max-w-[140px]" />
         </div>
         <div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="space-x-1">
-                <Avatar className="h-8 w-8">
+              <Button variant="outline" className="gap-1 px-2 sm:px-4">
+                <Avatar className="h-8 w-8 shrink-0">
                   <AvatarImage src="https://github.com/shadcn.png" />
 
                   <AvatarFallback>
@@ -36,7 +36,7 @@ const Header = () => {
                   </AvatarFallback>
                 </Avatar>
 
-                <p className="text-sm">
+                <p className="hidden text-sm sm:block">
                   {user.firstName} {user.lastName}
                 </p>
 
