@@ -13,6 +13,8 @@ financeiro e visualização gráfica.
 
 Acesse a aplicação publicada: [fintrack-jade-rho.vercel.app](https://fintrack-jade-rho.vercel.app/)
 
+![Dashboard do FinTrack](docs/images/dashboard.jpg)
+
 ## Funcionalidades
 
 - Cadastro, login e persistência da sessão do usuário;
