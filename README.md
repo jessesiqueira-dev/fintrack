@@ -9,6 +9,10 @@ financeiro e visualização gráfica.
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?logo=tailwindcss&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?logo=javascript&logoColor=black)
 
+## Demonstração
+
+Acesse a aplicação publicada: [fintrack-jade-rho.vercel.app](https://fintrack-jade-rho.vercel.app/)
+
 ## Funcionalidades
 
 - Cadastro, login e persistência da sessão do usuário;
@@ -108,7 +112,6 @@ As principais operações utilizadas são:
 ## Próximas melhorias
 
 - Adicionar testes automatizados;
-- Publicar a aplicação e incluir o link de demonstração;
 - Adicionar capturas de tela da interface.
 
 ## Autor
