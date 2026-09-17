@@ -13,6 +13,17 @@ import { toast } from 'sonner'
 import { useDeleteTransaction } from '@/api/hooks/transaction'
 import { useEditTransactionForm } from '@/forms/hooks/transaction'
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from './ui/alert-dialog'
 import { Button } from './ui/button'
 import { DatePicker } from './ui/date-picker'
 import {
@@ -35,6 +46,7 @@ import {
 
 const EditTransactionButton = ({ transaction }) => {
   const [sheetIsOpen, setSheetIsOpen] = useState(false)
+  const [deleteDialogIsOpen, setDeleteDialogIsOpen] = useState(false)
   const { mutateAsync: deleteTransaction, isPending: isDeleting } =
     useDeleteTransaction(transaction.id)
   const { form, onSubmit } = useEditTransactionForm({
@@ -51,14 +63,9 @@ const EditTransactionButton = ({ transaction }) => {
   })
 
   const handleDelete = async () => {
-    const shouldDelete = window.confirm(
-      'Tem certeza de que deseja excluir esta transação?'
-    )
-
-    if (!shouldDelete) return
-
     try {
       await deleteTransaction()
+      setDeleteDialogIsOpen(false)
       setSheetIsOpen(false)
       toast.success('Transação excluída com sucesso!')
     } catch (error) {
@@ -181,20 +188,47 @@ const EditTransactionButton = ({ transaction }) => {
               )}
             />
             <SheetFooter className="gap-2 sm:space-x-2">
-              <Button
-                type="button"
-                variant="destructive"
-                className="w-full"
-                disabled={form.formState.isSubmitting || isDeleting}
-                onClick={handleDelete}
+              <AlertDialog
+                open={deleteDialogIsOpen}
+                onOpenChange={setDeleteDialogIsOpen}
               >
-                {isDeleting ? (
-                  <Loader2Icon className="animate-spin" />
-                ) : (
-                  <Trash2Icon />
-                )}
-                Excluir
-              </Button>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    className="w-full"
+                    disabled={form.formState.isSubmitting || isDeleting}
+                  >
+                    <Trash2Icon />
+                    Excluir
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Excluir transação?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      A transação <strong>{transaction.name}</strong> será
+                      excluída permanentemente. Esta ação não pode ser desfeita.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel disabled={isDeleting}>
+                      Cancelar
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      variant="destructive"
+                      disabled={isDeleting}
+                      onClick={(event) => {
+                        event.preventDefault()
+                        handleDelete()
+                      }}
+                    >
+                      {isDeleting && <Loader2Icon className="animate-spin" />}
+                      Excluir
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
               <SheetClose asChild>
                 <Button
                   type="reset"
