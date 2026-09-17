@@ -55,7 +55,7 @@ const AddTransactionButton = () => {
             Nova transação
           </Button>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent className="max-h-[calc(100vh-2rem)] w-[calc(100%-2rem)] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Adicionar Transação</DialogTitle>
             <DialogDescription>Insira as informações abaixo.</DialogDescription>
@@ -127,7 +127,7 @@ const AddTransactionButton = () => {
                   <FormItem>
                     <p className="text-sm font-medium">Tipo</p>
                     <FormControl>
-                      <div className="grid grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-4">
                         <Button
                           type="button"
                           variant={
@@ -166,7 +166,7 @@ const AddTransactionButton = () => {
                   </FormItem>
                 )}
               />
-              <DialogFooter className="sm:space-x-4">
+              <DialogFooter className="gap-2 sm:space-x-2">
                 <DialogClose asChild>
                   <Button
                     type="reset"

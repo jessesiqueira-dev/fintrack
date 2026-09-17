@@ -36,10 +36,13 @@ const LoginPage = () => {
   }
 
   return (
-    <div className="flex h-screen w-screen flex-col items-center justify-center gap-3">
+    <div className="flex min-h-screen w-full flex-col items-center justify-center gap-3 px-4 py-8">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)}>
-          <Card className="w-[500px]">
+        <form
+          className="w-full max-w-[500px]"
+          onSubmit={form.handleSubmit(handleSubmit)}
+        >
+          <Card className="w-full">
             <CardHeader>
               <CardTitle>Faça login</CardTitle>
               <CardDescription>
@@ -88,7 +91,7 @@ const LoginPage = () => {
           </Card>
         </form>
       </Form>
-      <div className="flex items-center justify-center">
+      <div className="flex flex-wrap items-center justify-center">
         <p className="text-center opacity-50">Ainda não possui uma conta?</p>
         <Button variant="link" asChild>
           <Link to="/signup">Crie agora</Link>

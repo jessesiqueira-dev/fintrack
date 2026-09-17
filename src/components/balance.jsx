@@ -16,7 +16,7 @@ const Balance = () => {
   const to = searchParams.get('to') // YYYY-MM-DD
   const { data } = useGetUserBalance({ from, to })
   return (
-    <div className="grid grid-cols-2 grid-rows-2 gap-6">
+    <div className="grid grid-cols-2 grid-rows-2 gap-3 sm:gap-6">
       <BalanceItem
         label="Saldo"
         amount={data?.balance}

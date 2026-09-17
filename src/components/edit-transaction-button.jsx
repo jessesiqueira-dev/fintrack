@@ -76,7 +76,7 @@ const EditTransactionButton = ({ transaction }) => {
           <ExternalLinkIcon className="text-muted-foreground" />
         </Button>
       </SheetTrigger>
-      <SheetContent className="min-w-[450px]">
+      <SheetContent className="w-full min-w-0 overflow-y-auto sm:min-w-[450px] sm:max-w-[520px]">
         <SheetTitle>Editar Transação</SheetTitle>
         <Form {...form}>
           <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
@@ -143,7 +143,7 @@ const EditTransactionButton = ({ transaction }) => {
                 <FormItem>
                   <FormLabel>Tipo</FormLabel>
                   <FormControl>
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-4">
                       <Button
                         type="button"
                         variant={
@@ -180,7 +180,7 @@ const EditTransactionButton = ({ transaction }) => {
                 </FormItem>
               )}
             />
-            <SheetFooter className="sm:space-x-4">
+            <SheetFooter className="gap-2 sm:space-x-2">
               <Button
                 type="button"
                 variant="destructive"
